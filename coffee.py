@@ -139,15 +139,12 @@ def is_enough_money(order, amount):
 
 
 def use_ingredients(order):
-    existing_water = resources['water']['amount']
-    existing_milk = resources['milk']['amount']
-    existing_coffee = resources['coffee']['amount']
     required_water = MENU[order]['ingredients']['water']
     required_milk = MENU[order]['ingredients']['milk']
     required_coffee = MENU[order]['ingredients']['coffee']
-    resources['water']['amount'] = existing_water - required_water
-    resources['milk']['amount'] = existing_milk - required_milk
-    resources['coffee']['amount'] = existing_coffee - required_coffee
+    resources['water']['amount'] -= required_water
+    resources['milk']['amount'] -= required_milk
+    resources['coffee']['amount'] -= required_coffee
 
 
 def print_processing_indicator(repetitions=3):
@@ -192,6 +189,7 @@ def get_action(order):
         return (process_order(order))
 
 
-while True:
-    order = get_order()
-    get_action(order)
+if __name__ == "__main__":
+    while True:
+        order = get_order()
+        get_action(order)
