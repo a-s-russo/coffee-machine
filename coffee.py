@@ -30,21 +30,25 @@ MENU = {
     }
 }
 
-profit = 0
 resources = {
     "water": {
         "amount": 300,
         "unit": "ml",
+        "max": 500,
     },
     "milk": {
         "amount": 200,
         "unit": "ml",
+        "max": 500,
     },
     "coffee": {
         "amount": 100,
         "unit": "g",
+        "max": 500,
     }
 }
+
+profit = 0
 
 
 def print_menu():
@@ -61,10 +65,11 @@ def print_menu():
 def get_order():
     print_menu()
     order = input("\nWhat would you like to order?\n").lower()
-    valid_options = list(MENU.keys()) + ['report', 'off']
+    valid_options = list(
+        MENU.keys()) + ['report', 'off', 'restock', 'resupply', 'refill', 'replenish']
     while order not in valid_options:
         order = input(
-            "Sorry, I didn't understand that. What would you like? (espresso/latte/cappuccino\n")
+            "\nSorry, I didn't understand that. What would you like?\n")
     return order
 
 
@@ -150,6 +155,56 @@ def use_ingredients(order):
     resources['coffee']['amount'] -= required_coffee
 
 
+def get_ingredient():
+    print_report()
+    ingredient = input("\nWhich ingredient?\n").lower()
+    valid_options = list(resources.keys())
+    while ingredient not in valid_options:
+        ingredient = input(
+            "\nSorry, I didn't understand that. Which ingredient?\n")
+    return ingredient
+
+
+def get_amount(ingredient):
+    while True:
+        try:
+            unit = resources[ingredient]['unit']
+            desired_amount = int(
+                input("\nHow much " + ingredient + " (" + unit + ")? "))
+            current_amount = resources[ingredient]['amount']
+            max_amount = resources[ingredient]['max']
+            if desired_amount > 0 and desired_amount + current_amount <= max_amount:
+                break
+            elif desired_amount == 0:
+                print("Current amount will remain unchanged.")
+                break
+            elif desired_amount < 0:
+                print("Invalid input.")
+            else:
+                print("Machine capacity will be exceeded.")
+        except ValueError:
+            print("Invalid input.")
+    return desired_amount
+
+
+def refill_ingredients():
+    while True:
+        ingredient = get_ingredient()
+        amount = get_amount(ingredient)
+        resources[ingredient]['amount'] += amount
+        if amount > 0:
+            print("Refilling machine...")
+            print_processing_indicator()
+        action = input("\nRefill again, or exit? ").lower()
+        if action in ['restock', 'resupply', 'refill', 'replenish']:
+            continue
+        elif action in ['exit', 'quit']:
+            return
+        else:
+            print('Unknown command. Exiting...')
+            break
+
+
 def print_processing_indicator(repetitions=3):
     for i in range(repetitions):
         time.sleep(1)
@@ -184,12 +239,14 @@ def process_order(order):
 
 
 def get_action(order):
-    if order == 'report':
-        return (print_report())
+    if order.lower() == 'report':
+        return print_report()
+    elif order.lower() in ['restock', 'resupply', 'refill', 'replenish']:
+        return refill_ingredients()
     elif order == 'off':
-        return (turn_off())
+        return turn_off()
     else:
-        return (process_order(order))
+        return process_order(order)
 
 
 if __name__ == "__main__":
