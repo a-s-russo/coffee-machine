@@ -102,11 +102,14 @@ def get_coin(type):
     while True:
         try:
             coins = int(input("\nHow many " + type + "? "))
-            if coins >= 0:
+            if coins >= 0 and coins <= 100:
                 break
+            elif coins < 0:
+                print("Invalid input.")
+            else:
+                print("Too many coins inserted.")
         except ValueError:
-            pass
-        print("Invalid input.")
+            print("Invalid input.")
     return coins
 
 
