@@ -66,7 +66,7 @@ def get_order():
     print_menu()
     order = input("\nWhat would you like to order?\n").lower()
     valid_options = list(
-        MENU.keys()) + ['report', 'off', 'restock', 'resupply', 'refill', 'replenish']
+        MENU.keys()) + ['report', 'off', 'restock', 'resupply', 'refill', 'replenish', 'money']
     while order not in valid_options:
         order = input(
             "\nSorry, I didn't understand that. What would you like?\n")
@@ -133,7 +133,7 @@ def give_change(order, amount):
     if change > 0:
         print("\nHere is", '${:,.2f}'.format(change), "in change.")
     else:
-        print("\nExact money inserted")
+        print("\nExact money inserted.")
     global profit
     profit = profit + cost
 
@@ -217,7 +217,7 @@ def dispense_order(order):
     print_processing_indicator()
     print("\nHere is your", order, "\b:")
     print("\n☕")
-    print("\nCAUTION! *Drink may be hot*")
+    print("\nCAUTION! *Drink may be hot.*")
     input("Please press Enter to take your drink...")
 
 
@@ -238,11 +238,20 @@ def process_order(order):
         print_processing_indicator()
 
 
+def withdraw_money():
+    global profit
+    print("\nDispensing", '${:,.2f}'.format(profit), "\b...")
+    print_processing_indicator()
+    profit = 0
+
+
 def get_action(order):
     if order.lower() == 'report':
         return print_report()
     elif order.lower() in ['restock', 'resupply', 'refill', 'replenish']:
         return refill_ingredients()
+    elif order.lower() == 'money':
+        return withdraw_money()
     elif order == 'off':
         return turn_off()
     else:
