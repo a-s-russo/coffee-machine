@@ -1,6 +1,5 @@
-import sys
-import time
-
+from sys import exit
+from time import sleep
 from tabulate import tabulate
 
 MENU = {
@@ -86,7 +85,7 @@ def print_report():
 def turn_off():
     print("\nTurning machine off...")
     print_processing_indicator()
-    sys.exit()
+    exit()
 
 
 def is_enough_resources(order):
@@ -207,7 +206,7 @@ def refill_ingredients():
 
 def print_processing_indicator(repetitions=3):
     for i in range(repetitions):
-        time.sleep(1)
+        sleep(1)
         print('...')
 
 
