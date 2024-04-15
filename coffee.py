@@ -33,17 +33,17 @@ resources = {
     "water": {
         "amount": 300,
         "unit": "ml",
-        "max": 500,
+        "max": 1000,
     },
     "milk": {
         "amount": 200,
         "unit": "ml",
-        "max": 500,
+        "max": 1000,
     },
     "coffee": {
         "amount": 100,
         "unit": "g",
-        "max": 500,
+        "max": 1000,
     }
 }
 
@@ -77,7 +77,7 @@ def print_report():
     for item in resources:
         amount = resources[item]['amount']
         unit = resources[item]['unit']
-        print(item.title(), ": ", amount, unit, sep="")
+        print(item.title(), ": ", '{:,.0f}'.format(amount), unit, sep="")
     print("Money:", '${:,.2f}'.format(profit))
     input("\nPress Enter to continue...")
 
@@ -168,10 +168,16 @@ def get_amount(ingredient):
     while True:
         try:
             unit = resources[ingredient]['unit']
-            desired_amount = int(
-                input("\nHow much " + ingredient + " (" + unit + ")? "))
             current_amount = resources[ingredient]['amount']
             max_amount = resources[ingredient]['max']
+            remaining_amount = max_amount - current_amount
+            msg_how_much = "\nHow much " + ingredient + " (in " + unit + ")?\n"
+            msg_max_amount = "(Maximum capacity: " + \
+                '{:,.0f}'.format(max_amount) + unit + ")\n"
+            msg_remaining_amount = "(Remaining capacity: " + \
+                '{:,.0f}'.format(remaining_amount) + unit + ")\n"
+            desired_amount = int(
+                input(msg_how_much + msg_max_amount + msg_remaining_amount))
             if desired_amount > 0 and desired_amount + current_amount <= max_amount:
                 break
             elif desired_amount == 0:
@@ -192,9 +198,9 @@ def refill_ingredients():
         amount = get_amount(ingredient)
         resources[ingredient]['amount'] += amount
         if amount > 0:
-            print("Refilling machine...")
+            print("\nRefilling machine...")
             print_processing_indicator()
-        action = input("\nRefill again, or exit? ").lower()
+        action = input("\nRefill again, or exit?\n").lower()
         if action in ['restock', 'resupply', 'refill', 'replenish']:
             continue
         elif action in ['exit', 'quit']:

@@ -79,13 +79,18 @@ Press Enter to continue...
 Which ingredient?
 milk
 
-How much milk (ml)? 350
+How much milk (in ml)?
+(Maximum capacity: 1,000ml)
+(Remaining capacity: 950ml)
+350
+
 Refilling machine...
 ...
 ...
 ...
 
-Refill again, or exit? exit
+Refill again, or exit?
+exit
 ```
 
 ## Withdraw profit
