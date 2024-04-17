@@ -1,4 +1,6 @@
-from sys import exit
+"""A script to simulate a coffee vending machine."""
+
+import sys
 from time import sleep
 from tabulate import tabulate
 
@@ -51,9 +53,10 @@ profit = 0
 
 
 def print_menu():
+    """Prints the items in the menu and their costs."""
     print("\n")
-    items = [item.title() for item in MENU.keys()]
-    costs = ['${:,.2f}'.format(item['cost']) for item in MENU.values()]
+    items = [item.title() for item in MENU]
+    costs = [f"${item['cost']:,.2f}" for item in MENU.values()]
     print(tabulate({"Item": items,
                     "Cost": costs},
                    headers="keys",
@@ -62,6 +65,7 @@ def print_menu():
 
 
 def get_order():
+    """Asks for and returns a menu item."""
     print_menu()
     order = input("\nWhat would you like to order?\n").lower()
     valid_options = list(
@@ -73,42 +77,39 @@ def get_order():
 
 
 def print_report():
+    """Prints the ingredients in the machine and their quantities, and the current profit."""
     print("\n")
-    for item in resources:
-        amount = resources[item]['amount']
-        unit = resources[item]['unit']
-        print(item.title(), ": ", '{:,.0f}'.format(amount), unit, sep="")
-    print("Money:", '${:,.2f}'.format(profit))
+    for ingredient, info in resources.items():
+        amount = info['amount']
+        unit = info['unit']
+        print(f"{ingredient.title()}: {amount:,.0f}{unit}")
+    print(f"Money: ${profit:,.2f}")
     input("\nPress Enter to continue...")
 
 
 def turn_off():
+    "Turns off the machine and exits the program."
     print("\nTurning machine off...")
     print_processing_indicator()
-    exit()
+    sys.exit()
 
 
 def is_enough_resources(order):
-    required_water = MENU[order]['ingredients']['water']
-    required_milk = MENU[order]['ingredients']['milk']
-    required_coffee = MENU[order]['ingredients']['coffee']
-    if resources['water']['amount'] < required_water:
-        return False
-    elif resources['milk']['amount'] < required_milk:
-        return False
-    elif resources['coffee']['amount'] < required_coffee:
-        return False
-    else:
-        return True
+    """Checks if there are enough ingredients to make the order."""
+    for ingredient, info in resources.items():
+        if info['amount'] < MENU[order]['ingredients'][ingredient]:
+            return False
+    return True
 
 
-def get_coin(type):
+def get_coins(coin_type):
+    """Gets the number of coins inserted for a given coin type."""
     while True:
         try:
-            coins = int(input("\nHow many " + type + "? "))
-            if coins >= 0 and coins <= 100:
+            coins = int(input("\nHow many " + coin_type + "? "))
+            if 0 <= coins <= 100:
                 break
-            elif coins < 0:
+            if coins < 0:
                 print("Invalid input.")
             else:
                 print("Too many coins inserted.")
@@ -118,19 +119,21 @@ def get_coin(type):
 
 
 def get_money():
+    """Returns the total value calculated from the coins inserted."""
     print("\nPlease insert coins.")
-    quarters = get_coin("quarters")
-    dimes = get_coin("dimes")
-    nickles = get_coin("nickles")
-    pennies = get_coin("pennies")
+    quarters = get_coins("quarters")
+    dimes = get_coins("dimes")
+    nickles = get_coins("nickles")
+    pennies = get_coins("pennies")
     return quarters * 0.25 + dimes * 0.1 + nickles * 0.05 + pennies * 0.01
 
 
 def give_change(order, amount):
+    """Returns the change in the event of overpayment."""
     cost = MENU[order]['cost']
     change = amount - cost
     if change > 0:
-        print("\nHere is", '${:,.2f}'.format(change), "in change.")
+        print(f"\nHere is ${change:,.2f} in change.")
     else:
         print("\nExact money inserted.")
     global profit
@@ -138,6 +141,7 @@ def give_change(order, amount):
 
 
 def is_enough_money(order, amount):
+    """Checks if the coins inserted are enough to pay for the order."""
     cost = MENU[order]['cost']
     if amount >= cost:
         return True
@@ -146,15 +150,13 @@ def is_enough_money(order, amount):
 
 
 def use_ingredients(order):
-    required_water = MENU[order]['ingredients']['water']
-    required_milk = MENU[order]['ingredients']['milk']
-    required_coffee = MENU[order]['ingredients']['coffee']
-    resources['water']['amount'] -= required_water
-    resources['milk']['amount'] -= required_milk
-    resources['coffee']['amount'] -= required_coffee
+    """Deducts the required ingredient quantities from the resources."""
+    for ingredient, info in resources.items():
+        info['amount'] -= MENU[order]['ingredients'][ingredient]
 
 
 def get_ingredient():
+    """Asks for and returns an ingredient to restock."""
     print_report()
     ingredient = input("\nWhich ingredient?\n").lower()
     valid_options = list(resources.keys())
@@ -165,6 +167,7 @@ def get_ingredient():
 
 
 def get_amount(ingredient):
+    """Asks for and returns the amount of an ingredient to be restocked."""
     while True:
         try:
             unit = resources[ingredient]['unit']
@@ -172,15 +175,14 @@ def get_amount(ingredient):
             max_amount = resources[ingredient]['max']
             remaining_amount = max_amount - current_amount
             msg_how_much = "\nHow much " + ingredient + " (in " + unit + ")?\n"
-            msg_max_amount = "(Maximum capacity: " + \
-                '{:,.0f}'.format(max_amount) + unit + ")\n"
-            msg_remaining_amount = "(Remaining capacity: " + \
-                '{:,.0f}'.format(remaining_amount) + unit + ")\n"
+            msg_max_amount = f"(Maximum capacity: {max_amount:,.0f}{unit})\n"
+            msg_remaining_amount = f"(Remaining capacity: {
+                remaining_amount:,.0f}{unit})\n"
             desired_amount = int(
                 input(msg_how_much + msg_max_amount + msg_remaining_amount))
             if desired_amount > 0 and desired_amount + current_amount <= max_amount:
                 break
-            elif desired_amount == 0:
+            if desired_amount == 0:
                 print("Current amount will remain unchanged.")
                 break
             elif desired_amount < 0:
@@ -193,6 +195,7 @@ def get_amount(ingredient):
 
 
 def refill_ingredients():
+    """Restocks an ingredient."""
     while True:
         ingredient = get_ingredient()
         amount = get_amount(ingredient)
@@ -211,12 +214,14 @@ def refill_ingredients():
 
 
 def print_processing_indicator(repetitions=3):
-    for i in range(repetitions):
+    """Prints a processing indicator."""
+    for _ in range(repetitions):
         sleep(1)
         print('...')
 
 
 def dispense_order(order):
+    """Dispenses an order from the machine."""
     use_ingredients(order)
     print("\nPreparing drink...")
     print_processing_indicator()
@@ -227,6 +232,7 @@ def dispense_order(order):
 
 
 def process_order(order):
+    """Processes an order."""
     if is_enough_resources(order):
         money_inserted = get_money()
         if is_enough_money(order, money_inserted):
@@ -244,13 +250,18 @@ def process_order(order):
 
 
 def withdraw_money():
+    """Retrieves any coins from the machine."""
     global profit
-    print("\nDispensing", '${:,.2f}'.format(profit), "\b...")
+    if profit > 0:
+        print(f"\nDispensing ${profit:,.2f}...")
+    else:
+        print("\nThere is no money to dispense. Exiting...")
     print_processing_indicator()
     profit = 0
 
 
 def get_action(order):
+    """Gets the corresponding action of an order or command."""
     if order.lower() == 'report':
         return print_report()
     elif order.lower() in ['restock', 'resupply', 'refill', 'replenish']:
@@ -265,5 +276,5 @@ def get_action(order):
 
 if __name__ == "__main__":
     while True:
-        order = get_order()
-        get_action(order)
+        choice = get_order()
+        get_action(choice)
