@@ -1,5 +1,7 @@
 """Module providing a class for modelling a payment machine."""
 
+from utilities import print_processing_indicator
+
 
 class MoneyMachine:
     """Models the machine that processes the payment."""
@@ -70,8 +72,8 @@ class MoneyMachine:
             else:
                 print("\nNo money inserted. Cancelling order...")
             self.money_received = 0
+            print_processing_indicator()
             return False
-            # print_processing_indicator()
 
     def withdraw_money(self):
         """Retrieves any coins from the machine."""
@@ -79,5 +81,5 @@ class MoneyMachine:
             print("\nDispensing", f"${self.profit:,.2f}...")
         else:
             print("\nThere is no money to dispense. Exiting...")
-        # print_processing_indicator()
+        print_processing_indicator()
         self.profit = 0

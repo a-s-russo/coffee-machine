@@ -8,7 +8,7 @@ coffee_maker = CoffeeMaker()
 menu = Menu()
 money_machine = MoneyMachine()
 
-# TODO: define processing indicator function
+
 if __name__ == "__main__":
     while True:
         order = menu.get_order()
@@ -16,9 +16,8 @@ if __name__ == "__main__":
             print(coffee_maker)
             print(money_machine)
             input("\nPress Enter to continue...")
-        # TODO: create functionality to restock ingredients
-        # elif order in ['restock', 'resupply', 'refill', 'replenish']:
-        #    return refill_ingredients()
+        elif order in coffee_maker.REFILL_COMMANDS:
+            coffee_maker.refill_ingredients()
         elif order == 'money':
             money_machine.withdraw_money()
         elif order == 'off':

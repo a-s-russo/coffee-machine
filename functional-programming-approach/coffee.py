@@ -31,6 +31,8 @@ MENU = {
     }
 }
 
+REFILL_COMMANDS = ['restock', 'resupply', 'refill', 'replenish']
+
 resources = {
     "water": {
         "amount": 300,
@@ -69,7 +71,7 @@ def get_order():
     print_menu()
     order = input("\nWhat would you like to order?\n").lower()
     valid_options = list(
-        MENU.keys()) + ['report', 'off', 'restock', 'resupply', 'refill', 'replenish', 'money']
+        MENU.keys()) + ['report', 'off', 'money'] + REFILL_COMMANDS
     while order not in valid_options:
         order = input(
             "\nSorry, I didn't understand that. What would you like?\n")
@@ -174,7 +176,10 @@ def get_amount(ingredient):
             current_amount = resources[ingredient]['amount']
             max_amount = resources[ingredient]['max']
             remaining_amount = max_amount - current_amount
-            msg_how_much = "\nHow much " + ingredient + " (in " + unit + ")?\n"
+            if remaining_amount == 0:
+                print("Machine capacity already reached.")
+                return 0
+            msg_how_much = f"\nHow much {ingredient} (in {unit})?\n"
             msg_max_amount = f"(Maximum capacity: {max_amount:,.0f}{unit})\n"
             msg_remaining_amount = f"(Remaining capacity: {
                 remaining_amount:,.0f}{unit})\n"
@@ -204,12 +209,13 @@ def refill_ingredients():
             print("\nRefilling machine...")
             print_processing_indicator()
         action = input("\nRefill again, or exit?\n").lower()
-        if action in ['restock', 'resupply', 'refill', 'replenish']:
+        if action in REFILL_COMMANDS:
             continue
         elif action in ['exit', 'quit']:
             return
         else:
             print('Unknown command. Exiting...')
+            print_processing_indicator()
             break
 
 
@@ -264,7 +270,7 @@ def get_action(order):
     """Gets the corresponding action of an order or command."""
     if order.lower() == 'report':
         return print_report()
-    elif order.lower() in ['restock', 'resupply', 'refill', 'replenish']:
+    elif order.lower() in REFILL_COMMANDS:
         return refill_ingredients()
     elif order.lower() == 'money':
         return withdraw_money()

@@ -20,6 +20,9 @@ class MenuItem:
 class Menu:
     """Models a menu of items."""
 
+    SECRET_COMMANDS = ['report', 'off', 'money']
+    REFILL_COMMANDS = ['restock', 'resupply', 'refill', 'replenish']
+
     def __init__(self):
         self.menu = sorted([
             MenuItem(name="espresso", water=50, milk=0, coffee=18, cost=1.5),
@@ -42,8 +45,7 @@ class Menu:
         print(self)
         order_name = input("\nWhat would you like to order?\n").lower()
         items = [item.name for item in self.menu]
-        valid_options = items + ['report', 'off', 'restock',
-                                 'resupply', 'refill', 'replenish', 'money']
+        valid_options = items + self.REFILL_COMMANDS + self.SECRET_COMMANDS
         while order_name not in valid_options:
             order_name = input(
                 "\nSorry, I didn't understand that. What would you like?\n")
