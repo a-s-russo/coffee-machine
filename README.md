@@ -4,7 +4,23 @@ A script to simulate interaction with a coffee vending machine via the command l
 
 Inspired by the project for day 15 of the course: [100 Days of Python](https://100daysofpython.dev/).
 
-## Order beverage
+## Running
+
+To run the simulation:
+1. Ensure [Python](https://www.python.org/) is installed on your computer.
+2. Ensure the Python package [tabulate](https://pypi.org/project/tabulate/) is installed using `pip install tabulate`.
+3. Download the relevant files from this repository:
+    - For the functional programming approach, downloand `coffee.py` from the `📁functional-programming-approach` folder.
+    - For the object-oriented approach, download the Python scripts from the `📁object-oriented-approach` folder (that is, the five `*.py` files) into the same folder.
+4. Run `coffee.py` or `main.py`, respectively.
+
+(The functionality between the functional programming and object-oriented approaches should be mostly the same.)
+
+## Modifying
+
+Change the relevant values in the relevant scripts as desired, such as the menu items and the machine's starting stock levels.
+
+## Ordering a beverage
 
 ```
 +------------+-------+
@@ -19,7 +35,7 @@ What would you like to order?
 latte
 ```
 
-## Insert coins
+## Inserting coins
 
 ```
 Please insert coins.
@@ -47,7 +63,7 @@ CAUTION! *Drink may be hot.*
 Please press Enter to take your drink...
 ```
 
-## Check supplies
+## Checking supplies
 
 ```
 What would you like to order?
@@ -62,7 +78,7 @@ Money: $2.50
 Press Enter to continue...
 ```
 
-## Restock ingredients
+## Restocking ingredients
 
 ```
 What would you like to order?
@@ -93,7 +109,7 @@ Refill again, or exit?
 exit
 ```
 
-## Withdraw profit
+## Withdrawing profit
 
 ```
 What would you like to order?
@@ -105,7 +121,7 @@ Dispensing $2.50...
 ...
 ```
 
-## Turn off
+## Turning off
 
 ```
 What would you like to order?
