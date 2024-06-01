@@ -1,4 +1,4 @@
-"""Module providing classes for modelling a menu and and menu items."""
+"""Module providing classes for modelling a menu and menu items."""
 
 from operator import attrgetter
 from tabulate import tabulate
